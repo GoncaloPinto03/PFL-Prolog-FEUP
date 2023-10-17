@@ -49,11 +49,11 @@ display_instructions :- write('*************************************************
 menu :- display_menu, nl, choose_option, read(Input), read_input(Input).
 
 % READS THE INPUT GIVEN BY THE USER
-read_input(1) :- write('start_game_func(player, player)').
-read_input(2) :- write('start_game_func(player, computer)').
-read_input(3) :- write('start_game_func(computer, computer)').
+read_input(1) :- start_game().
+read_input(2) :- play_pc.
+read_input(3) :- play_cc.
 read_input(4) :- display_instructions.
-read_input(0) :- write('Good Bye! Exiting...').
+read_input(0) :- exit_game.
 
 read_input(_Other) :-  write('Invalid option... Try again!'),
                        nl,
@@ -63,8 +63,15 @@ read_input(_Other) :-  write('Invalid option... Try again!'),
 
 choose_option :- write('> Choose an option ').
 
+% Clears the terminal screen
+clear :- write('\e[2J').
 
+exit_game :- clear, nl, write('Good bye! Thanks for playing ;)').
 
+play_pc :- start_game().
+play_cc :- start_game().
+
+start_game()
 
 
 
