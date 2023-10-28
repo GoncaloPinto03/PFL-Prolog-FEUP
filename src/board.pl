@@ -39,18 +39,25 @@ board(  [asterisc, asterisc, asterisc, asterisc, asterisc, asterisc, asterisc, a
 
 % Define the board
 board([
-  [asterisc, none, asterisc, none, asterisc, none, asterisc, none, asterisc, none, asterisc, none, asterisc, none, asterisc, none, asterisc, none, asterisc, none, asterisc],
+  [none, none, asterisc, none, none, asterisc, none, none, asterisc, none, none, asterisc, none, none, asterisc, none, none, asterisc, none, none, asterisc, none, none, asterisc, none, none, asterisc, none, none, asterisc, none, none, asterisc, none, none, asterisc, none, none],
   [asterisc, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, asterisc],
   [asterisc, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, empty, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, asterisc],
+  [asterisc, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, asterisc],
   [asterisc, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, empty, none, none, none, empty, none, none, none, none, none, none, none, none, none,none, none, none, none, none, none, none, asterisc],
-  [asterisc, none, none, none, none, none, none,none, none, none, none, none, none, none, none, empty, none, none, none, empty, none, none, none, empty, none, none, none, none, none, none, none, none, none, none, none, none, none, none, asterisc],
-  [asterisc, none, none, none, none, none, none,none, none, none, none, none, none, empty, none, none, none, empty, none, none, none, empty, none, none, none, empty, none, none, none, none, none, none, none, none, none, none, none, none, asterisc],
+  [asterisc, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, asterisc],
+  [asterisc, none, none, none, none, none, none, none, none, none, none, none, none, none, none, empty, none, none, none, empty, none, none, none, empty, none, none, none, none, none, none, none, none, none, none, none, none, none, none, asterisc],
+  [asterisc, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, asterisc],
+  [asterisc, none, none, none, none, none, none, none, none, none, none, none, none, empty, none, none, none, empty, none, none, none, empty, none, none, none, empty, none, none, none, none, none, none, none, none, none, none, none, none, asterisc],
+  [asterisc, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, asterisc],
   [asterisc, none, none, none, none, none, none, none, none, none, none, empty, none, none, none, empty, none, none, none, empty, none, none, none, empty, none, none, none, empty, none, none, none, none, none, none, none, none, none, none, asterisc],
+  [asterisc, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, asterisc],
   [asterisc, none, none, none, none, none, none, none, none, empty, none, none, none, empty, none, none, none, empty, none, none, none, empty, none, none, none, empty, none, none, none, empty, none, none, none, none, none, none, none, none, asterisc],
+  [asterisc, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, asterisc],
   [asterisc, none, none, none, none, none, none, empty, none, none, none, empty, none, none, none, empty, none, none, none, empty, none, none, none, empty, none, none, none, empty, none, none, none, empty, none, none, none, none, none, none, asterisc],
+  [asterisc, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, asterisc],
   [asterisc, none, none, none, none, empty, none, none, none, empty, none, none, none, empty, none, none, none, empty, none, none, none, empty, none, none, none, empty, none, none, none, empty, none, none, none, empty, none, none, none, none, asterisc],
-  [asterisc, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, asterisc],
-  [asterisc, asterisc, asterisc, asterisc, asterisc, asterisc, asterisc, asterisc, asterisc, asterisc, asterisc, asterisc, asterisc, asterisc, asterisc, asterisc, asterisc, asterisc, asterisc, asterisc, asterisc]
+  [asterisc, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, asterisc],
+  [none, none, asterisc, none, none, asterisc, none, none, asterisc, none, none, asterisc, none, none, asterisc, none, none, asterisc, none, none, asterisc, none, none, asterisc, none, none, asterisc, none, none, asterisc, none, none, asterisc, none, none, asterisc, none, none]
 ]).
 
 show_board(Board) :- nl, maplist(show_row, Board), nl.
