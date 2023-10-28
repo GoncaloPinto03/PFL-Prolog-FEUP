@@ -27,7 +27,7 @@ display_instructions :- write('*************************************************
                 write('*                                           AGERE                                             *'),nl,
                 write('*                                                       2 players | 15-30 minutes | ages 8+   *'),nl,
                 write('*                                                                                             *'),nl,
-                write('*    MATERIALS: 35 0''s and 35 1''s; game board as shown                                      *'),nl,
+                write('*    MATERIALS: 35 0''s and 35 1''s; game board as shown                                       *'),nl,
                 write('*                                                                                             *'),nl,
                 write('*    SETUP: One player places a 0 on any space. The other player decides                      *'),nl,
                 write('*    which number (0 or 1) to play. 1 goes first.                                             *'),nl,
@@ -49,9 +49,9 @@ display_instructions :- write('*************************************************
 menu :- display_menu, nl, choose_option, read(Input), read_input(Input).
 
 % READS THE INPUT GIVEN BY THE USER
-read_input(1) :- start_game().
-read_input(2) :- play_pc.
-read_input(3) :- play_cc.
+read_input(1) :- write('test'). % start_game().
+read_input(2) :- write('test'). % play_pc.
+read_input(3) :- write('test').% play_cc.
 read_input(4) :- display_instructions.
 read_input(0) :- exit_game.
 
@@ -68,10 +68,10 @@ clear :- write('\e[2J').
 
 exit_game :- clear, nl, write('Good bye! Thanks for playing ;)').
 
-play_pc :- start_game().
-play_cc :- start_game().
+% play_pc :- start_game().
+% play_cc :- start_game().
 
-start_game()
+% start_game()
 
 
 
