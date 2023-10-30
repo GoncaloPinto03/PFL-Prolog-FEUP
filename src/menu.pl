@@ -1,25 +1,26 @@
 %########################## MENU FUNCTIONS ##########################
 
 % DISPLAYS THE MENU OF THE GAME
-display_menu:- write('***********************************************************************************************'),nl,
-       write('*                                                                                             *'),nl,
-       write('*   @@@@@@@  @@@@@@@@@  @@@@@@@@  @@@@@@@    @@@@@@@@   *   OPTIONS  *      DESCRIPTION       *'),nl,
-       write('*  @@     @@ @@         @@       @@     @@   @@         *            *                        *'),nl,
-       write('*  @@     @@ @@         @@       @@     @@   @@         *      1     *    PLAYER VS PLAYER    *'),nl,
-       write('*  @@@@@@@@@ @@  @@@@@  @@@@@@@@ @@@@@@@@@   @@@@@@@@   *      2     *    PLAYER VS COMPUTER  *'),nl,
-       write('*  @@     @@ @@     @@  @@       @@ @@       @@         *      3     *  COMPUTER VS COMPUTER  *'),nl,
-       write('*  @@     @@ @@     @@  @@       @@   @@     @@         *      4     *      INSTRUCTIONS      *'),nl,
-       write('*  @@     @@ @@@@@@@@@  @@@@@@@@ @@     @@   @@@@@@@@   *      0     *          EXIT          *'),nl,
-       write('*                                                                                             *'),nl,
-       write('*  *****************************************************************************************  *'),nl,
-       write('*                                                                                             *'),nl,
-       write('*                                                              @@@@  @@@@  @  @  @@@          *'),nl,
-       write('*          GONÇALO PINTO  * UP202108693                        @     @     @  @  @  @         *'),nl,
-       write('*          GONÇALO SANTOS * UP202108839                        @@@   @@@@  @  @  @@@          *'),nl,
-       write('*                                                              @     @     @  @  @            *'),nl,
-       write('*                                                              @     @@@@  @@@@  @            *'),nl,
-       write('*                                                                                             *'),nl,
-       write('***********************************************************************************************'),nl.
+display_menu:-  nl,
+                write('* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *'),nl,
+                write('*                                                       *                                       *'),nl,
+                write('*   @@@@@@@  @@@@@@@@@  @@@@@@@@  @@@@@@@    @@@@@@@@   *   OPTIONS          DESCRIPTION        *'),nl,
+                write('*  @@     @@ @@         @@       @@     @@   @@         *                                       *'),nl,
+                write('*  @@     @@ @@         @@       @@     @@   @@         *      1           PLAYER VS PLAYER     *'),nl,
+                write('*  @@@@@@@@@ @@  @@@@@  @@@@@@@@ @@@@@@@@@   @@@@@@@@   *      2           PLAYER VS COMPUTER   *'),nl,
+                write('*  @@     @@ @@     @@  @@       @@ @@       @@         *      3         COMPUTER VS COMPUTER   *'),nl,
+                write('*  @@     @@ @@     @@  @@       @@   @@     @@         *      4             INSTRUCTIONS       *'),nl,
+                write('*  @@     @@ @@@@@@@@@  @@@@@@@@ @@     @@   @@@@@@@@   *      0                 EXIT           *'),nl,
+                write('*                                                       *                                       *'),nl,
+                write('* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *'),nl,
+                write('*                                                       *                                       *'),nl,
+                write('*                                                       *         @@@@  @@@@  @  @  @@@         *'),nl,
+                write('*          GONÇALO PINTO  * UP202108693                 *         @     @     @  @  @  @        *'),nl,
+                write('*                                                       *         @@@   @@@@  @  @  @@@         *'),nl,
+                write('*          GONÇALO SANTOS * UP202108839                 *         @     @     @  @  @           *'),nl,
+                write('*                                                       *         @     @@@@  @@@@  @           *'),nl,
+                write('*                                                       *                                       *'),nl,
+                write('* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *'),nl.
 
 % DISPLAYS THE INSTRUCTIONS OF THE GAME
 display_instructions :- write('***********************************************************************************************'),nl,
@@ -51,33 +52,65 @@ display_instructions :- write('*************************************************
                 write('*                                                                                             *'),nl,
                 write('***********************************************************************************************'),nl.
 
+% CLEARS THE TERMINAL SCREEN
+clear_display :- write('\e[2J').
+
 % DISPLAYS THE MENU
-menu :- display_menu, nl, choose_option, read(Input), read_input(Input).
+menu :- repeat,
+        clear_display,
+        display_menu,
+        nl,
+        menu_choose_option,
+        read(Input),
+        read_menu_input(Input).
 
 % READS THE INPUT GIVEN BY THE USER
-read_input(1) :- write('test'). % start_game().
-read_input(2) :- write('test'). % play_pc.
-read_input(3) :- write('test').% play_cc.
-read_input(4) :- display_instructions.
-read_input(0) :- exit_game.
+read_menu_input(1) :- write('start_game()'). % start_game().
+read_menu_input(2) :- write('play_pc'). % play_pc.
+read_menu_input(3) :- write('play_cc').% play_cc.
+read_menu_input(4) :- display_instructions.
+read_menu_input(0) :- exit_game.
 
-read_input(_Other) :-  write('Invalid option... Try again!'),
-                       nl,
-                       choose_option,
-                       read(Input),
-                       read_input(Input).
+read_menu_input(_Other) :-      write('Invalid option... Try again!'),
+                                nl,
+                                menu_choose_option,
+                                read(Input),
+                                read_menu_input(Input).
 
-choose_option :- write('> Choose an option ').
-
-% Clears the terminal screen
-clear :- write('\e[2J').
-
-exit_game :- clear, nl, write('Good bye! Thanks for playing ;)').
-
-% play_pc :- start_game().
-% play_cc :- start_game().
-
-% start_game()
+menu_choose_option :- write('> Choose an option (0-4): ').
 
 
+% Exits the game
+exit_game :- clear_display, nl, write('Good bye! Thanks for playing ;)').
 
+dificulty_choose_option :-      write('Choose a dificulty (1 or 2)'),
+                                write('Easy (Random) -> 1'),
+                                nl,
+                                write('Hard (Greedy) -> 2'),
+                                read(Input),
+                                read_dificulty_input(Input).
+
+
+read_dificulty_input(1) :- write('').
+read_dificulty_input(2) :- write('').
+read_dificulty_input(_Other) :- write('Invalid option... Try again!'),
+                                nl,
+                                dificulty_choose_option,
+                                read(Input),
+                                read_dificulty_input(Input).
+
+
+play_pp :-      write('start_game(pp)').
+
+play_pc :-      write('Choose the dificulty of your oponent'),
+                nl,
+                dificulty_choose_option,
+                write('start_game(pc)').
+                
+play_cc :-      write('Choose the dificulty of player 1'),
+                dificulty_choose_option,
+                write('Choose the dificulty of player 2'),
+                dificulty_choose_option,
+                write('start_game(pp)').
+
+% start_game(mode, dificulty)
