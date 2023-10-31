@@ -88,6 +88,6 @@ show_cell(thirty_six) :- write('36').
 
 
 % Display each element of a list (matrix)
-display_matrix :-
-    board(Board), % Get the matrix from the fact
+display_board :-
+    board(Board),
     show_board(Board).
