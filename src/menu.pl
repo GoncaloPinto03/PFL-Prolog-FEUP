@@ -92,23 +92,48 @@ play_cc :-      write('Choose the dificulty of player 1'),
                 dificulty_choose_option(Input2),
                 startGame(Input1-Input2).
 
+instructions :- display_instructions,
+                nl,
+                write('Back -> 1'),
+                nl,
+                write('Exit Game -> 2'),
+                nl,
+                write('> '),
+                read(Input),
+                read_instructions_input(Input).
+
 % READS THE INPUT GIVEN BY THE USER
 read_menu_input(1) :- play_pp.
 read_menu_input(2) :- play_pc. 
 read_menu_input(3) :- play_cc.
-read_menu_input(4) :- display_instructions.
+read_menu_input(4) :- instructions.
 read_menu_input(0) :- exit_game.
 
 read_menu_input(_Other) :-      write('Invalid option... Try again!'),
                                 nl,
-                                menu_choose_option,
+                                write('Back -> 1'),
+                                nl,
+                                write('Exit Game -> 2'),
+                                nl,
+                                write('> '),
                                 read(Input),
-                                read_menu_input(Input).
+                                read_instructions_input(Input).
+
+read_instructions_input(1) :-   clear_display,
+                                nl,
+                                menu.
+
+read_instructions_input(2) :-   exit_game.
+            
+read_instructions_input(_Other) :-      write('Invalid option... Try again!'),
+                                        nl,
+                                        menu_choose_option,
+                                        read(Input),
+                                        read_menu_input(Input).
 
 menu_choose_option :-   write('Choose an option (0-4)'),
                         nl,
                         write('> ').
-
 
 
 exit_game :- clear_display, nl, write('Good bye! Thanks for playing ;)').
