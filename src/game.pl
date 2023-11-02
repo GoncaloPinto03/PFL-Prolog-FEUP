@@ -1,3 +1,9 @@
+:-use_module(library(random)).
+:-use_module(library(lists)).
+
+:- consult('board.pl'). % Assuming 'board.pl' contains your board definition
+
+
 /*
  
 * * * * * * * * * * FUNCTIONS TO DEVELOP * * * * * * * * * * 
@@ -208,6 +214,46 @@ congratulateWinner(Winner) :-
     write('Congratulations, '),
     write(PString),
     write('! You won the game!'), skip_line.    
+
+
+% Define a predicate to check if a player has won by connecting all sides of the board
+player_wins(Player) :-
+    board(Board),
+    % Find all starting positions for the given player
+    findall([Row, Column], (between(1, 8, Row), between(1, 8, Column), nth1(Row, Board, RowList), nth1(Column, RowList, Player)), StartPositions),
+    % Check if any of the starting positions can connect to all sides
+    member(StartPosition, StartPositions),
+    dfs(Player, StartPosition, _, _).
+
+% Define a depth-first search (DFS) predicate to explore and connect pieces
+dfs(Player, [Row, Column], Visited, ConnectedSides) :-
+    board(Board),
+    \+ member([Row, Column], Visited), % Ensure we haven't visited this cell before
+    nth1(Row, Board, RowList),
+    nth1(Column, RowList, Player), % Ensure the cell contains the player's piece
+
+    % Check if we've connected all sides
+    (Row = 1 ; Row = 8 ; Column = 1 ; Column = 8),
+    append(Visited, [[Row, Column]], NewVisited),
+    list_to_set(NewVisited, UniqueVisited),
+    sort(UniqueVisited, SortedVisited),
+    (Row = 1, Sides = [top] ;
+     Row = 8, Sides = [bottom] ;
+     Column = 1, Sides = [left] ;
+     Column = 8, Sides = [right] ;
+     Sides = []),
+
+    % Recursively explore adjacent cells
+    adjacent_cells(Row, Column, AdjacentCells),
+    foldl(dfs(Player, Board, NewVisited), AdjacentCells, NewConnectedSides, NewConnectedSides1),
+    append(Sides, NewConnectedSides1, ConnectedSides).
+
+
+% Define a predicate to check if a player has won
+player_won(Player) :-
+    player_wins(Player), % Check if the player can connect all sides
+    write(Player), write(' has won the game.').
+
 
 
 playerString(a, 'Player A').

@@ -8,51 +8,16 @@
 % Find the Bot difficulty
 :- dynamic difficulty/2.
 
-:- dynamic board2/1.
+:- dynamic board/1.
 
 %########################## BOARD FUNCTIONS ##########################
 
 % DISPLAYS THE BOARD
 
-% Define the board
-board([
-  [none, none, asterisc, none, none, asterisc, none, none, asterisc, none, none, asterisc, none, none, asterisc, none, none, asterisc, none, none, asterisc, none, none, asterisc, none, none, asterisc, none, none, asterisc, none, none, asterisc, none, none, asterisc, none, none, asterisc, none, none, asterisc, none, none, asterisc, none, none, asterisc, none, none, asterisc, none, none, asterisc, none, none],
-  [asterisc, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, asterisc],
-  [asterisc, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, asterisc],
-  [asterisc, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, zero, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, asterisc],
-  [asterisc, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, one, arrow, empty, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none,asterisc],
-  [asterisc, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, asterisc],
-  [asterisc, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, zero, none, none, none, none, none, zero, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, asterisc],
-  [asterisc, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, two, arrow, empty, none, none, none, three, arrow, empty, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, asterisc],
-  [asterisc, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, asterisc],
-  [asterisc, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, zero, none, none, none, none, none, zero, none, none, none, none, none, zero, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, asterisc],
-  [asterisc, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, four, arrow, empty, none, none, none, five, arrow, empty, none, none, none, six, arrow, empty, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, asterisc],
-  [asterisc, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, asterisc],
-  [asterisc, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, zero, none, none, none, none, none, zero, none, none, none, none, none, zero, none, none, none, none, none, zero, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, asterisc],
-  [asterisc, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, seven, arrow, empty, none, none, none, eight, arrow, empty, none, none, none, nine, arrow, empty, none, none, ten, arrow, empty, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, asterisc],
-  [asterisc, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, asterisc],
-  [asterisc, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, zero, none, none, none, none, none, zero, none, none, none, none, none, zero, none, none, none, none, none, zero, none, none, none, none, none, zero, none, none, none, none, none, none, none, none, none, none, none, none, none, asterisc],
-  [asterisc, none, none, none, none, none, none, none, none, none, none, none, none, none, eleven, arrow, empty, none, none, twelve, arrow, empty, none, none, thirteen, arrow, empty, none, none, fourteen, arrow, empty, none, none, fifteen, arrow, empty, none, none, none, none, none, none, none, none, none, none, none, none, none, asterisc],
-  [asterisc, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, asterisc],
-  [asterisc, none, none, none, none, none, none, none, none, none, none, none, none, none, zero, none, none, none, none, none, zero, none, none, none, none, none, zero, none, none, none, none, none, zero, none, none, none, none, none, zero, none, none, none, none, none, zero, none, none, none, none, none, none, none, none, none, none, asterisc],
-  [asterisc, none, none, none, none, none, none, none, none, none, none, sixteen, arrow, empty, none, none, seventeen, arrow, empty, none, none, eighteen, arrow, empty, none, none, nineteen, arrow, empty, none, none, twenty, arrow, empty, none, none, twenty_one, arrow, empty, none, none, none, none, none, none, none, none, none, none, asterisc],
-  [asterisc, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, asterisc],
-  [asterisc, none, none, none, none, none, none, none, none, none, none, zero, none, none, none, none, none, zero, none, none, none, none, none, zero, none, none, none, none, none, zero, none, none, none, none, none, zero, none, none, none, none, none, zero, none, none, none, none, none, zero, none, none, none, none, none, none, none, asterisc],
-  [asterisc, none, none, none, none, none, none, none, twenty_two, arrow, empty, none, none, twenty_three, arrow, empty, none, none, twenty_four, arrow, empty, none, none, twenty_five, arrow, empty, none, none, twenty_six, arrow, empty, none, none, twenty_seven, arrow, empty, none, none, twenty_eight, arrow, empty, none, none, none, none, none, none, none, asterisc],
-  [asterisc, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, asterisc],
-  [asterisc, none, none, none, none, none, none, none, zero, none, none, none, none, none, zero, none, none, none, none, none, zero, none, none, none, none, none, zero, none, none, none, none, none, zero, none, none, none, none, none, zero, none, none, none, none, none, zero, none, none, none, none, none, zero, none, none, none, none, asterisc],
-  [asterisc, none, none, none, none, twenty_nine, arrow, empty, none, none, thirty, arrow, empty, none, none, thirty_one, arrow, empty, none, none, thirty_two, arrow, empty, none, none, thirty_three, arrow, empty, none, none, thirty_four, arrow, empty, none, none, thirty_five, arrow, empty, none, none, thirty_six, arrow, empty, none, none, none, none, asterisc],
-  [asterisc, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, asterisc],
-  [asterisc, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, asterisc],
-  [none, none, asterisc, none, none, asterisc, none, none, asterisc, none, none, asterisc, none, none, asterisc, none, none, asterisc, none, none, asterisc, none, none, asterisc, none, none, asterisc, none, none, asterisc, none, none, asterisc, none, none, asterisc, none, none, asterisc, none, none, asterisc, none, none, asterisc, none, none, asterisc, none, none, asterisc, none, none, asterisc, none, none]
-]).
-
-
-
 % Initialize the dynamic predicate with the initial game board
 initialize_board :-
-    retractall(board2(_)),
-    assertz(board2([
+    retractall(board(_)),
+    assertz(board([
         [empty, none, none, none, none, none, none, none],
         [empty, empty, none, none, none, none, none, none],
         [empty, empty, empty, none, none, none, none, none],
@@ -72,7 +37,7 @@ show_row([Cell | Rest]) :-
 
 % Display each element of a list (matrix)
 display_board :-
-    board2(Board),
+    board(Board),
     show_board(Board).
 
 
@@ -140,11 +105,11 @@ validPlayer(playerB).
 
 % Place a piece on the game board
 place_piece(Row, Column, Piece) :-
-    retract(board2(Board)),
+    retract(board(Board)),
     nth0(Row, Board, OldRow),
     replace(Column, Piece, OldRow, NewRow),
     replace(Row, NewRow, Board, NewBoard),
-    assertz(board2(NewBoard)).
+    assertz(board(NewBoard)).
 
 % Utility predicate to replace an element in a list with a new element
 replace(Index, Element, OldList, NewList) :-

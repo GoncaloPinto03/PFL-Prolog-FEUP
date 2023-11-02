@@ -4,7 +4,6 @@
 :- consult('utils.pl').
 :- consult('game.pl').
 
-
 /**
  * play/0
  *

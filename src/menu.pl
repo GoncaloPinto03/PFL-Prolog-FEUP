@@ -79,7 +79,7 @@ startGame(Type) :-
     fail. % Go back to menu
 
 
-play_pp :-      startGame(p-p).
+play_pp :-      player_won(playerA).
 
 play_pc :-      get_name(player1),
                 asserta((name_of(player2, 'bot'))), !, 
