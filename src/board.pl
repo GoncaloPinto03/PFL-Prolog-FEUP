@@ -1,5 +1,15 @@
 :- use_module(library(lists)).
 
+% name_of(+Player, -Name)
+% Find the Players name
+:- dynamic name_of/2.
+
+% difficulty(+Bot,-Difficulty)
+% Find the Bot difficulty
+:- dynamic difficulty/2.
+
+:- dynamic board2/1.
+
 %########################## BOARD FUNCTIONS ##########################
 
 % DISPLAYS THE BOARD
@@ -37,8 +47,34 @@ board([
   [none, none, asterisc, none, none, asterisc, none, none, asterisc, none, none, asterisc, none, none, asterisc, none, none, asterisc, none, none, asterisc, none, none, asterisc, none, none, asterisc, none, none, asterisc, none, none, asterisc, none, none, asterisc, none, none, asterisc, none, none, asterisc, none, none, asterisc, none, none, asterisc, none, none, asterisc, none, none, asterisc, none, none]
 ]).
 
+
+
+% Initialize the dynamic predicate with the initial game board
+initialize_board :-
+    retractall(board2(_)),
+    assertz(board2([
+        [empty, none, none, none, none, none, none, none],
+        [empty, empty, none, none, none, none, none, none],
+        [empty, empty, empty, none, none, none, none, none],
+        [empty, empty, empty, empty, none, none, none, none],
+        [empty, empty, empty, empty, empty, none, none, none],
+        [empty, empty, empty, empty, empty, empty, none, none],
+        [empty, empty, empty, empty, empty, empty, empty, none],
+        [empty, empty, empty, empty, empty, empty, empty, empty]
+    ])).
+
 show_board(Board) :- nl, maplist(show_row, Board), nl.
-show_row(Row) :- maplist(show_cell, Row), nl.
+show_row([]) :- nl.
+show_row([Cell | Rest]) :-
+    show_cell(Cell),
+    write('   '), % Insert 3 spaces between cells
+    show_row(Rest).
+
+% Display each element of a list (matrix)
+display_board :-
+    board2(Board),
+    show_board(Board).
+
 
 show_cell(none) :- write(' ').
 show_cell(playerA) :- write('A').
@@ -46,6 +82,9 @@ show_cell(playerB) :- write('B').
 show_cell(empty) :- write('E').
 show_cell(asterisc) :- write('*').
 show_cell(arrow) :- write('-').
+
+
+
 
 show_cell(zero) :- write('0').
 show_cell(one) :- write('1').
@@ -85,9 +124,54 @@ show_cell(thirty_four) :- write('34').
 show_cell(thirty_five) :- write('35').
 show_cell(thirty_six) :- write('36').
 
+piece_info(player1, playerA).
+piece_info(player2, playerB).
 
 
-% Display each element of a list (matrix)
-display_board :-
-    board(Board),
-    show_board(Board).
+displayGame :-
+    display_board.
+
+
+
+
+validPlayer(playerA).
+validPlayer(playerB).
+
+
+% Place a piece on the game board
+place_piece(Row, Column, Piece) :-
+    retract(board2(Board)),
+    nth0(Row, Board, OldRow),
+    replace(Column, Piece, OldRow, NewRow),
+    replace(Row, NewRow, Board, NewBoard),
+    assertz(board2(NewBoard)).
+
+% Utility predicate to replace an element in a list with a new element
+replace(Index, Element, OldList, NewList) :-
+    nth0(Index, OldList, _, Temp),
+    nth0(Index, NewList, Element, Temp).
+
+
+% Define a predicate to calculate adjacent cells for a given row and column
+adjacent_cells(Row, Column, ValidAdjacentCells) :-
+    Row >= 0, Row =< 7, Column >= 0, Column =< 7, % Check if the cell is not on the edge of the board
+    RowAbove is Row - 1,
+    RowBelow is Row + 1,
+    ColumnLeft is Column - 1,
+    ColumnRight is Column + 1,
+    AdjacentCells = [
+        [RowAbove, ColumnLeft],
+        [RowAbove, Column],
+        [Row, ColumnLeft],
+        [Row, ColumnRight],
+        [RowBelow, Column],
+        [RowBelow, ColumnRight]
+    ],
+    include(is_valid_adjacent_cell, AdjacentCells, ValidAdjacentCells).
+
+% Define a predicate to check if a given adjacent cell coordinate is valid
+is_valid_adjacent_cell([Row, Column]) :-
+    Row >= 0, Row =< 7,
+    Column >= 0, Column =< 7,
+    Column =< Row.
+

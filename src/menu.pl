@@ -81,7 +81,9 @@ startGame(Type) :-
 
 play_pp :-      startGame(p-p).
 
-play_pc :-      write('Choose the dificulty of your oponent'),
+play_pc :-      get_name(player1),
+                asserta((name_of(player2, 'bot'))), !, 
+                write('Choose the dificulty of your oponent'),
                 nl,
                 dificulty_choose_option(Input),
                 startGame(p-Input).
@@ -104,8 +106,8 @@ instructions :- display_instructions,
 
 % READS THE INPUT GIVEN BY THE USER
 read_menu_input(1) :- play_pp.
-read_menu_input(2) :- play_pc. 
-read_menu_input(3) :- play_cc.
+read_menu_input(2) :- write('play_pc'). 
+read_menu_input(3) :- write('play_cc').
 read_menu_input(4) :- instructions.
 read_menu_input(0) :- exit_game.
 

@@ -1,5 +1,5 @@
 /*
-   
+ 
 * * * * * * * * * * FUNCTIONS TO DEVELOP * * * * * * * * * * 
 
 initialState(+GameState)
@@ -60,7 +60,6 @@ print_turn([_, Player, _, _]):-
     name_of(Player, Name),
     format('Player ~a, is your turn!\n', [Name]), !.
 
-choose_move(GameState, Move) :- write('test').
 
 % move(+GameState, +Move, -NewGameState)
 % Moves a piece
@@ -72,9 +71,7 @@ move(GameState, ColI-RowI-ColF-RowF, NewGameState):-
     other_player(Player, NewPlayer),
     forced_moves(NewBoard, NewPlayer, NewForcedMoves),
     NewTotalMoves is TotalMoves + 1,
-    NewGameState = [NewBoard,NewPlayer,NewForcedMoves,NewTotalMoves].
-
-
+    NewGameState = [NewBoard, NewPlayer, NewForcedMoves, NewTotalMoves].
 
 
 
@@ -106,9 +103,9 @@ move(GameState, ColI-RowI-ColF-RowF, NewGameState):-
  *
  * Initiates the game
 */
-gameInit(P1-P2) :-
-        initialState(Size, GameState),
-        displayGame(Size, GameState),
+gameInit(BoardSize, P1-P2) :-
+        initialState(BoardSize, GameState),
+        displayGame,
         random_select(FirstPlayer, [P1, P2], _Rest),
         gameLoop(GameState, FirstPlayer, P1-P2).
 
@@ -139,11 +136,9 @@ gameLoop(GameState, p, GameType) :-
  *
  * Chooses the move according to the game state and player type
 */
-chooseMove((Board, Player), p, Move) :-
+chooseMove(Player) :-
         playerString(Player, PString),
-        askTypeOfMove(PString, Num),
-        boardDimensions(Board, LineNumber, ColumnNumber),
-        chooseTypeOfMove(Num, LineNumber, ColumnNumber, Move).
+        askTypeOfMove(PString).
 
 chooseMove(GameState, Level, Move) :-
         validMoves(GameState, Moves),
@@ -160,13 +155,21 @@ chooseMove(h, (Board, Player), Moves, Move) :-
         evaluateBoard((NewBoard, Player), Value) ), [_V-Move|_]),
         displayBotMove(Move, Player).
 
+
+gameOver((Board,_), Player) :-
+        validPlayer(Player),
+        % missing evaluate function to check win (checkWin())
+        checkWin(Board).
+
+
 askForBoardPosition(Position) :-
         write('Select a board position (1-36)'),
         nl,
         write('> '),
         read(Position).
 
-askTypeOfMove(Player, Type) :-
+askTypeOfMove(Player) :-
+        printPlayerTurn(Player),
         write('You want to:'),
         nl,
         write('Insert a new letter -> 1'),
@@ -175,5 +178,37 @@ askTypeOfMove(Player, Type) :-
         nl,
         write('> '),
         read(Input),
-        saveType(Input, Type).
-        
+        read_type_of_move_input(Input).
+
+read_type_of_move_input(1) :- write('insertPiece').
+read_type_of_move_input(2) :- write('movePiece').
+read_type_of_move_input(_Other) :-      write('You want to:'),
+                                        nl,
+                                        write('Invalid option... Try again!'),
+                                        nl,
+                                        write('Insert a new letter -> 1'),
+                                        nl,
+                                        write('Move a letter to another adjacent board position-> 2'),
+                                        nl,
+                                        write('> '),
+                                        read(Input),
+                                        read_type_of_move_input(Input).
+
+
+/**
+ * printPlayerTurn(+Player)
+ *
+ * Displays the player's turn message
+*/
+printPlayerTurn(Player) :-
+    format('>> Your turn, ~p <<~n~n', [Player]).
+
+congratulateWinner(Winner) :-
+    playerString(Winner, PString),
+    write('Congratulations, '),
+    write(PString),
+    write('! You won the game!'), skip_line.    
+
+
+playerString(a, 'Player A').
+playerString(b, 'Player B'). 
