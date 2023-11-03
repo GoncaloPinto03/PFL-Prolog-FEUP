@@ -28,6 +28,12 @@ initialize_board :-
         [empty, empty, empty, empty, empty, empty, empty, empty]
     ])).
 
+player(playerA).
+player(playerB).
+
+% Define the current player
+current_player(P) :- player(P).
+
 show_board(Board) :- nl, maplist(show_row, Board), nl.
 show_row([]) :- nl.
 show_row([Cell | Rest]) :-
@@ -95,8 +101,6 @@ piece_info(player2, playerB).
 
 displayGame :-
     display_board.
-
-
 
 
 validPlayer(playerA).

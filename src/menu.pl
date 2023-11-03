@@ -1,3 +1,5 @@
+:- consult('game.pl').
+
 %########################## MENU FUNCTIONS ##########################
 
 % DISPLAYS THE MENU OF THE GAME
@@ -79,7 +81,9 @@ startGame(Type) :-
     fail. % Go back to menu
 
 
-play_pp :-      player_won(playerA).
+play_pp :-
+    initialize_board, % Initialize the game board
+    game_loop(playerA).
 
 play_pc :-      get_name(player1),
                 asserta((name_of(player2, 'bot'))), !, 

@@ -24,148 +24,119 @@ chooseMove(+GameState, +Level, -Move)
 
  */
 
-% game_cycle(+GameState)
-% Loop that keeps the game running
-game_cycle(GameState):-
-    game_over(GameState, Winner), !,
-    display_game(GameState),
-    show_winner(GameState, Winner).
-game_cycle(GameState):-
-    display_game(GameState),
-    print_turn(GameState),
-    choose_move(GameState, Move),
-    move(GameState, Move, NewGameState), !,
-    game_cycle(NewGameState).
 
-% game_over(+GameState, +Winner)
-% Checks if the game is over
-game_over([Board,OtherPlayer,_, _], Winner):-
-    n_waters_to_win(NWatersToWin),
-    other_player(OtherPlayer, Winner),
-    count_waters(Board, Winner, NWatersToWin).
+game_loop(CurrentPlayer) :-
+    display_board, % Display the current game board
+    nl, write('Player '), write(CurrentPlayer), write("'s turn."), nl,
+    get_player_move(CurrentPlayer, Row, Column), % Get the player's move
+    (valid_move(CurrentPlayer, Row, Column) -> % Check if the move is valid
+        place_piece(Row, Column, CurrentPlayer), % Update the game board
+        (player_wins(CurrentPlayer) -> % Check if the player wins
+            display_board,
+            write('Player '), write(CurrentPlayer), write(' wins! Game over.'), nl
+        ;
+            % Switch to the other player and continue the game
+            switch_player(CurrentPlayer, NextPlayer),
+            game_loop(NextPlayer)
+        )
+    ;
+        write('Invalid move. Try again.'), nl,
+        game_loop(CurrentPlayer) % Stay on the same player's turn
+    ).
 
-% display_game(+GameState)
-% Prints the board
-display_game([Board,_,_,_]) :-
-    clear_console,
-    length(Board, Size),
-    display_header(1, Size),
-    display_bar(Size),
-    display_rows(Board, 1, Size).
+% Define a predicate to get the player's move (row and column)
+get_player_move(Player, Row, Column) :-
+    repeat,
+    write('Enter the row (1-8) and column (1-8) where you want to place your piece (e.g., "3 5"): '),
+    read(RowInput),
+    read(ColumnInput),
+    valid_input(RowInput, ColumnInput, Row, Column, Player),
+    !. % Cut operator (!) to stop the repeat loop
 
-% show_winner(+GameState, +Winner)
-% Prints the winner of the game and number of moves they made
-show_winner([_,_,_,TotalMoves], Winner):-
-    name_of(Winner, Name),
-    winner_moves(TotalMoves, WinnerMoves),
-    format('Winner is ~a with ~d moves!\n', [Name, WinnerMoves]).
-
-% print_turn(+GameState)
-% Prints a message declaring whose turn it is
-print_turn([_, Player, _, _]):-
-    name_of(Player, Name),
-    format('Player ~a, is your turn!\n', [Name]), !.
+% Define a predicate to validate the input
+valid_input(RowInput, ColumnInput, Row, Column, Player) :-
+    integer(RowInput),
+    integer(ColumnInput),
+    between(1, 8, RowInput), % Validate row input (1-8)
+    between(1, 8, ColumnInput), % Validate column input (1-8)
+    Row is RowInput - 1, % Adjust for 0-based indexing
+    Column is ColumnInput - 1, % Adjust for 0-based indexing
+    valid_move(Player, Row, Column). % Check if the move is valid based on game rules
 
 
-% move(+GameState, +Move, -NewGameState)
-% Moves a piece
-move(GameState, ColI-RowI-ColF-RowF, NewGameState):-                       
-    [Board,Player,_,TotalMoves] = GameState,
-    position(Board,ColI-RowI,Piece),
-    put_piece(Board, ColI-RowI, empty, NewBoard1),
-    put_piece(NewBoard1, ColF-RowF, Piece, NewBoard),
-    other_player(Player, NewPlayer),
-    forced_moves(NewBoard, NewPlayer, NewForcedMoves),
-    NewTotalMoves is TotalMoves + 1,
-    NewGameState = [NewBoard, NewPlayer, NewForcedMoves, NewTotalMoves].
+% Define a predicate to switch players
+switch_player(playerA, playerB).
+switch_player(playerB, playerA).
 
+% Define the win condition check (you need to implement this)
+%player_wins(Player) :- 
+
+% Define a basic valid_move predicate for placing a piece in an empty cell
+valid_move(Player, Row, Column) :-
+    board(Board),
+    nth0(Row, Board, RowList),
+    nth0(Column, RowList, empty),
+    player(Player).
 
 
 
 
 
+% Predicate to find the first player piece on the defined edges of the board.
+find_edge_piece(Player, Board, Position) :-
+    find_first_column_piece(Player, Board, Position); % Check the first column.
+    find_last_row_piece(Player, Board, Position); % Check the last row.
+    find_diagonal_piece(Player, Board, Position). % Check the diagonal.
+
+% Find the first piece in the first column.
+find_first_column_piece(Player, Board, X/Y) :-
+    nth1(Y, Board, Row),
+    nth1(1, Row, Player),
+    !, % Cut to prevent backtracking once a match is found.
+    X = 1.
+
+% Find the first piece in the last row.
+find_last_row_piece(Player, Board, X/Y) :-
+    last(Board, LastRow),
+    nth1(X, LastRow, Player),
+    !, % Cut to prevent backtracking once a match is found.
+    length(Board, Y).
+
+% Find the first piece on the diagonal where X = Y.
+find_diagonal_piece(Player, Board, Position) :-
+    find_diagonal_piece_helper(Player, Board, 1, Position).
+
+find_diagonal_piece_helper(Player, Board, Index, Index/Index) :-
+    nth1(Index, Board, Row),
+    nth1(Index, Row, Player),
+    !. % Cut to prevent backtracking once a match is found.
+
+find_diagonal_piece_helper(Player, Board, Index, Position) :-
+    Index < 8,
+    NextIndex is Index + 1,
+    find_diagonal_piece_helper(Player, Board, NextIndex, Position).
+
+%%%
+player_wins(Player) :-
+    board(Board),
+    % Find all starting edge pieces for the player.
+    findall(Position, find_edge_piece(Player, Board, Position), StartPoints),
+    % Check if there is a connection between any of the start points to the other side.
+    % Depending on how your game rules define a win, implement the connection check here.
+    % For example, if a win is just having any piece on opposing sides:
+    member(X1/Y1, StartPoints),
+    member(X2/Y2, StartPoints),
+    % Check if the two points are on different sides.
+    % For example, here we just check if Y1 is 1 and Y2 is 8 for a vertical win.
+  
+    !.  % Cut to prevent further unnecessary backtracking if a win is found.
+
+  
 
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/**
- * gameInit(+BoardSize, +GameType)
- *
- * Initiates the game
-*/
-gameInit(BoardSize, P1-P2) :-
-        initialState(BoardSize, GameState),
-        displayGame,
-        random_select(FirstPlayer, [P1, P2], _Rest),
-        gameLoop(GameState, FirstPlayer, P1-P2).
-
-/**
- * gameLoop(+GameState, +PlayerType, +GameType)
- *
- * Main game cycle
-*/
-gameLoop(GameState, PlayerType, GameType) :-
-        gameOver(GameState, Winner), !,
-        congratulateWinner(Winner).
-
-gameLoop(GameState, PlayerType, GameType) :-
-        chooseMove(GameState, PlayerType, Move),
-        move(GameState, Move, NewGameState),
-        nextPlayer(PlayerType, NewPlayerType, GameType),
-        displayGame(NewGameState),
-        gameLoop(NewGameState, NewPlayerType, GameType), !.
-
-gameLoop(GameState, p, GameType) :-
-        printInvalidMove,
-        gameLoop(GameState, p, GameType), !. % Ask for another move
-
-
-
-/**
- * chooseMove(+GameState, +PlayerType, -Move)
- *
- * Chooses the move according to the game state and player type
-*/
-chooseMove(Player) :-
-        playerString(Player, PString),
-        askTypeOfMove(PString).
-
-chooseMove(GameState, Level, Move) :-
-        validMoves(GameState, Moves),
-        chooseMove(Level, GameState, Moves, Move).
-
-chooseMove(e, (_Board, Player), Moves, Move) :-
-        random_select(Move, Moves, _Rest),
-        displayBotMove(Move, Player).
-
-chooseMove(h, (Board, Player), Moves, Move) :-
-        setof(Value-Mv, (NewBoard, Opponent)^( member(Mv, Moves),
-        move((Board, Player), Mv, (NewBoard, Opponent)),
-        switchColor(Opponent, Player),
-        evaluateBoard((NewBoard, Player), Value) ), [_V-Move|_]),
-        displayBotMove(Move, Player).
-
-
-gameOver((Board,_), Player) :-
-        validPlayer(Player),
-        % missing evaluate function to check win (checkWin())
-        checkWin(Board).
 
 
 askForBoardPosition(Position) :-
@@ -216,43 +187,6 @@ congratulateWinner(Winner) :-
     write('! You won the game!'), skip_line.    
 
 
-% Define a predicate to check if a player has won by connecting all sides of the board
-player_wins(Player) :-
-    board(Board),
-    % Find all starting positions for the given player
-    findall([Row, Column], (between(1, 8, Row), between(1, 8, Column), nth1(Row, Board, RowList), nth1(Column, RowList, Player)), StartPositions),
-    % Check if any of the starting positions can connect to all sides
-    member(StartPosition, StartPositions),
-    dfs(Player, StartPosition, _, _).
-
-% Define a depth-first search (DFS) predicate to explore and connect pieces
-dfs(Player, [Row, Column], Visited, ConnectedSides) :-
-    board(Board),
-    \+ member([Row, Column], Visited), % Ensure we haven't visited this cell before
-    nth1(Row, Board, RowList),
-    nth1(Column, RowList, Player), % Ensure the cell contains the player's piece
-
-    % Check if we've connected all sides
-    (Row = 1 ; Row = 8 ; Column = 1 ; Column = 8),
-    append(Visited, [[Row, Column]], NewVisited),
-    list_to_set(NewVisited, UniqueVisited),
-    sort(UniqueVisited, SortedVisited),
-    (Row = 1, Sides = [top] ;
-     Row = 8, Sides = [bottom] ;
-     Column = 1, Sides = [left] ;
-     Column = 8, Sides = [right] ;
-     Sides = []),
-
-    % Recursively explore adjacent cells
-    adjacent_cells(Row, Column, AdjacentCells),
-    foldl(dfs(Player, Board, NewVisited), AdjacentCells, NewConnectedSides, NewConnectedSides1),
-    append(Sides, NewConnectedSides1, ConnectedSides).
-
-
-% Define a predicate to check if a player has won
-player_won(Player) :-
-    player_wins(Player), % Check if the player can connect all sides
-    write(Player), write(' has won the game.').
 
 
 
