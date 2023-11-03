@@ -83,6 +83,7 @@ startGame(Type) :-
 
 play_pp :-
     initialize_board, % Initialize the game board
+    initialize_board_stack, % Initialize the game board stack
     game_loop(playerA).
 
 play_pc :-      get_name(player1),

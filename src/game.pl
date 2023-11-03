@@ -27,12 +27,14 @@ chooseMove(+GameState, +Level, -Move)
 
 game_loop(CurrentPlayer) :-
     display_board, % Display the current game board
+    display_board_stack, % Display the current game board stack
     nl, write('Player '), write(CurrentPlayer), write("'s turn."), nl,
     get_player_move(CurrentPlayer, Row, Column), % Get the player's move
     (valid_move(CurrentPlayer, Row, Column) -> % Check if the move is valid
         place_piece(Row, Column, CurrentPlayer), % Update the game board
         (player_wins(CurrentPlayer) -> % Check if the player wins
             display_board,
+            display_board_stack,
             write('Player '), write(CurrentPlayer), write(' wins! Game over.'), nl
         ;
             % Switch to the other player and continue the game
@@ -116,20 +118,39 @@ find_diagonal_piece_helper(Player, Board, Index, Position) :-
     NextIndex is Index + 1,
     find_diagonal_piece_helper(Player, Board, NextIndex, Position).
 
-%%%
+
+
+
+% Check if a player has won
 player_wins(Player) :-
-    board(Board),
-    % Find all starting edge pieces for the player.
-    findall(Position, find_edge_piece(Player, Board, Position), StartPoints),
-    % Check if there is a connection between any of the start points to the other side.
-    % Depending on how your game rules define a win, implement the connection check here.
-    % For example, if a win is just having any piece on opposing sides:
-    member(X1/Y1, StartPoints),
-    member(X2/Y2, StartPoints),
-    % Check if the two points are on different sides.
-    % For example, here we just check if Y1 is 1 and Y2 is 8 for a vertical win.
-  
-    !.  % Cut to prevent further unnecessary backtracking if a win is found.
+    % Start the DFS from the top row
+    dfs(Player, 0, 0, _).
+
+% DFS to explore the board and check for a winning condition
+dfs(Player, Row, Col, Visited) :-
+    % Check if we've reached the bottom row
+    Row == 7,
+    % Check if the current cell contains the player's disc
+    nth0(Col, Visited, Player).
+
+dfs(Player, Row, Col, Visited) :-
+    % Check if we haven't visited this cell before
+    \+ member((Row, Col), Visited),
+    % Check if the current cell contains the player's disc
+    nth0(Col, Visited, Player),
+    % List of possible neighbors (up, left, right)
+    Neighbors = [(Row-1, Col), (Row, Col-1), (Row, Col+1)],
+    % Visit the neighboring cells
+    dfs_neighbors(Player, Neighbors, Visited).
+
+% DFS for neighboring cells
+dfs_neighbors(_, [], _).
+
+dfs_neighbors(Player, [(Row, Col) | Rest], Visited) :-
+    Row >= 0, Col >= 0, Col =< 7,
+    dfs(Player, Row, Col, [(Row, Col) | Visited]),
+    dfs_neighbors(Player, Rest, Visited).
+
 
   
 
@@ -171,24 +192,5 @@ read_type_of_move_input(_Other) :-      write('You want to:'),
                                         read(Input),
                                         read_type_of_move_input(Input).
 
-
-/**
- * printPlayerTurn(+Player)
- *
- * Displays the player's turn message
-*/
-printPlayerTurn(Player) :-
-    format('>> Your turn, ~p <<~n~n', [Player]).
-
-congratulateWinner(Winner) :-
-    playerString(Winner, PString),
-    write('Congratulations, '),
-    write(PString),
-    write('! You won the game!'), skip_line.    
-
-
-
-
-
-playerString(a, 'Player A').
-playerString(b, 'Player B'). 
+  
+ 

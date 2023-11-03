@@ -10,6 +10,8 @@
 
 :- dynamic board/1.
 
+:- dynamic board_stack/1.
+
 %########################## BOARD FUNCTIONS ##########################
 
 % DISPLAYS THE BOARD
@@ -27,6 +29,20 @@ initialize_board :-
         [empty, empty, empty, empty, empty, empty, empty, none],
         [empty, empty, empty, empty, empty, empty, empty, empty]
     ])).
+
+initialize_board_stack :-
+    retractall(board_stack(_)),
+    assertz(board_stack([
+        [0, '  ', '  ', '  ', '  ', '  ', '  ', '  '],
+        [0, 0, '  ', '  ', '  ', '  ', '  ', '  '],
+        [0, 0, 0, '  ', '  ', '  ', '  ', '  '],
+        [0, 0, 0, 0, '  ', '  ', '  ', '  '],
+        [0, 0, 0, 0, 0, '  ', '  ', '  '],
+        [0, 0, 0, 0, 0, 0, '  ', '  '],
+        [0, 0, 0, 0, 0, 0, 0, '  '],
+        [0, 0, 0, 0, 0, 0, 0, 0]
+
+                                  ])).
 
 player(playerA).
 player(playerB).
@@ -46,6 +62,19 @@ display_board :-
     board(Board),
     show_board(Board).
 
+show_board_stack(BoardStack) :- nl, maplist(show_row_stack, BoardStack), nl.
+
+show_row_stack([]) :- nl.
+show_row_stack([Cell | Rest]) :-
+    write(Cell),
+    write('   '), % Insert 3 spaces between cells
+    show_row_stack(Rest).
+
+% Display each element of a list (matrix)
+display_board_stack :-
+    board_stack(BoardStack),
+    show_board_stack(BoardStack).
+
 
 show_cell(none) :- write(' ').
 show_cell(playerA) :- write('A').
@@ -53,9 +82,6 @@ show_cell(playerB) :- write('B').
 show_cell(empty) :- write('E').
 show_cell(asterisc) :- write('*').
 show_cell(arrow) :- write('-').
-
-
-
 
 show_cell(zero) :- write('0').
 show_cell(one) :- write('1').
@@ -78,33 +104,44 @@ show_cell(seventeen) :- write('17').
 show_cell(eighteen) :- write('18').
 show_cell(nineteen) :- write('19').
 show_cell(twenty) :- write('20').
-show_cell(twenty_one) :- write('21').
-show_cell(twenty_two) :- write('22').
-show_cell(twenty_three) :- write('23').
-show_cell(twenty_four) :- write('24').
-show_cell(twenty_five) :- write('25').
-show_cell(twenty_six) :- write('26').
-show_cell(twenty_seven) :- write('27').
-show_cell(twenty_eight) :- write('28').
-show_cell(twenty_nine) :- write('29').
-show_cell(thirty) :- write('30').
-show_cell(thirty_one) :- write('31').
-show_cell(thirty_two) :- write('32').
-show_cell(thirty_three) :- write('33').
-show_cell(thirty_four) :- write('34').
-show_cell(thirty_five) :- write('35').
-show_cell(thirty_six) :- write('36').
+
 
 piece_info(player1, playerA).
 piece_info(player2, playerB).
 
 
 displayGame :-
-    display_board.
-
+    display_board,
+    display_board_stack.
+   
 
 validPlayer(playerA).
 validPlayer(playerB).
+
+% Increment the value at the specified row and column
+increment_cell_value(Row, Col) :-
+    board_stack(Board),
+    nth0(Row, Board, OldRow),
+    nth0(Col, OldRow, OldValue),
+    NewValue is OldValue + 1,
+    replace(OldRow, Col, NewValue, NewRow),
+    replace(Board, Row, NewRow, NewBoard),
+    retract(board_stack(_)),
+    assertz(board_stack(NewBoard)).
+
+% Helper predicate to replace an element in a list
+replace([_|T], 0, X, [X|T]).
+replace([H|T], I, X, [H|R]) :-
+    I > 0,
+    I1 is I - 1,
+    replace(T, I1, X, R).
+
+% Helper predicate to replace an element in a list of lists
+replace([H|T], 0, X, [X|T]).
+replace([H|T], I, X, [H|R]) :-
+    I > 0,
+    I1 is I - 1,
+    replace(T, I1, X, R).
 
 
 % Place a piece on the game board
@@ -113,7 +150,8 @@ place_piece(Row, Column, Piece) :-
     nth0(Row, Board, OldRow),
     replace(Column, Piece, OldRow, NewRow),
     replace(Row, NewRow, Board, NewBoard),
-    assertz(board(NewBoard)).
+    assertz(board(NewBoard)),
+    increment_cell_value(Row, Column).
 
 % Utility predicate to replace an element in a list with a new element
 replace(Index, Element, OldList, NewList) :-
