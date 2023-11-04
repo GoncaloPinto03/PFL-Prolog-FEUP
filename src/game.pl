@@ -3,7 +3,6 @@
 
 :- consult('board.pl'). % Assuming 'board.pl' contains your board definition
 
-
 /*
  
 * * * * * * * * * * FUNCTIONS TO DEVELOP * * * * * * * * * * 
@@ -54,29 +53,47 @@ game_loop(CurrentPlayer) :-
  
 
 game_loop(CurrentPlayer) :-
-    display_board, % Display the current game board
-    display_board_stack, % Display the current game board stack
+    display_board,
+    display_board_stack,
     nl, write('Player '), write(CurrentPlayer), write("'s turn."), nl,
-    
-    %askTypeOfMove(CurrentPlayer, Row, Column),
+
     get_player_move_play_from(CurrentPlayer, Row1, Column1),
     get_player_move_play_to(CurrentPlayer, Row2, Column2),
-    
-    (valid_move(CurrentPlayer, Row1, Column1) -> % Check if the move is valid
-        move_piece(Row1, Column1, Row2, Column2, CurrentPlayer),
-        (player_wins(CurrentPlayer) -> % Check if the player wins
-            display_board,
-            display_board_stack,
-            write('Player '), write(CurrentPlayer), write(' wins! Game over.'), nl
+
+    % Check if the move is valid
+    (valid_move(CurrentPlayer, Row1, Column1) ->
+
+        % Check if the stack heights are equal
+        (equivalence_stack(Row1, Column1, Row2, Column2) ->
+            % Check if the move is to an adjacent cell
+            (is_adjacent_cell(Row1, Column1, Row2, Column2) ->
+                % If all conditions are met, move the piece
+                move_piece(Row1, Column1, Row2, Column2, CurrentPlayer),
+                (player_wins(CurrentPlayer) ->
+                    display_board,
+                    display_board_stack,
+                    write('Player '), write(CurrentPlayer), write(' wins! Game over.'), nl
+                ;
+                    % Switch to the other player and continue the game
+                    switch_player(CurrentPlayer, NextPlayer),
+                    game_loop(NextPlayer)
+                )
+            ;
+                % If the move is not to an adjacent cell, display a message and try again
+                write('Piece can only be moved to an adjacent cell! Try again.'), nl,
+                game_loop(CurrentPlayer)
+            )
         ;
-            % Switch to the other player and continue the game
-            switch_player(CurrentPlayer, NextPlayer),
-            game_loop(NextPlayer)
+            % If the stack heights are not equal, display a message and try again
+            write('Stack heights are not equal! Try again.'), nl,
+            game_loop(CurrentPlayer)
         )
     ;
         write('Invalid move. Try again.'), nl,
-        game_loop(CurrentPlayer) % Stay on the same player's turn
+        game_loop(CurrentPlayer)
     ).
+
+
 
 
 % Define a predicate to get the player's move (row and column)

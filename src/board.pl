@@ -20,9 +20,9 @@
 initialize_board :-
     retractall(board(_)),
     assertz(board([
-        [empty, none, none, none, none, none, none, none],
+        [playerA, none, none, none, none, none, none, none],
         [playerA, playerB, none, none, none, none, none, none],
-        [empty, empty, empty, none, none, none, none, none],
+        [empty, playerA, playerA, none, none, none, none, none],
         [playerA, empty, playerB, empty, none, none, none, none],
         [empty, empty, empty, empty, empty, none, none, none],
         [empty, playerB, empty, empty, empty, empty, none, none],
@@ -33,9 +33,9 @@ initialize_board :-
 initialize_board_stack :-
     retractall(board_stack(_)),
     assertz(board_stack([
-        [0, '  ', '  ', '  ', '  ', '  ', '  ', '  '],
+        [1, '  ', '  ', '  ', '  ', '  ', '  ', '  '],
         [1, 1, '  ', '  ', '  ', '  ', '  ', '  '],
-        [0, 0, 0, '  ', '  ', '  ', '  ', '  '],
+        [0, 1, 1, '  ', '  ', '  ', '  ', '  '],
         [1, 0, 1, 0, '  ', '  ', '  ', '  '],
         [0, 0, 0, 0, 0, '  ', '  ', '  '],
         [0, 1, 0, 0, 0, 0, '  ', '  '],
@@ -165,19 +165,37 @@ place_piece(Row, Column, Piece) :-
     assertz(board(NewBoard)),
     increment_cell_value(Row, Column).
 
-% Move a piece from a position on another on the game board
 move_piece(Row1, Column1, Row2, Column2, Piece) :-
     retract(board(Board)),
-    nth0(Row2, Board, OldRow2),
-    nth0(Column1, OldRow1, Piece), % Check if the piece at (Row1, Column1) is the player's piece
-    replace(Column1, empty, OldRow1, NewRow1), % Replace the old position with an empty space
-    replace(Row1, NewRow1, Board, TempBoard),
-    assertz(board(TempBoard)),
-    replace(Column2, Piece, OldRow2, NewRow2), % Place the piece at the new position
-    replace(Row2, NewRow2, Board, NewBoard), % Update the board
-    assertz(board(NewBoard)),
-    decrement_cell_value(Row1, Column1),
-    increment_cell_value(Row2, Column2).
+    
+    % Check if the stack is 1
+    (stack_is_one_from(Row1, Column1) ->
+        % If the stack is 1, replace the current piece with an empty cell
+        ReplacementPiece1 = empty
+    ;
+        % If the stack is not 1, replace with the opponent's piece
+        (Piece = playerA -> ReplacementPiece1 = playerB ; ReplacementPiece1 = playerA)
+    ),
+
+    (equivalence_stack(Row1, Column1, Row2, Column2) -> % Check if Val1 is equal to Val2
+
+        % Update the board state
+        nth0(Row1, Board, OldRow1),
+        nth0(Column1, OldRow1, Piece),
+        replace(Column1, ReplacementPiece1, OldRow1, NewRow1),
+        replace(Row1, NewRow1, Board, TempBoard),
+    
+        nth0(Row2, TempBoard, OldRow2),
+        replace(Column2, Piece, OldRow2, NewRow2),
+        replace(Row2, NewRow2, TempBoard, NewBoard),
+    
+        % Assert the new board state
+        assertz(board(NewBoard)),
+        decrement_cell_value(Row1, Column1),
+        increment_cell_value(Row2, Column2)
+    ;
+        write('Stacks do not have the same height! Try again...')
+    ).
 
 
 % Utility predicate to replace an element in a list with a new element
@@ -208,4 +226,29 @@ is_valid_adjacent_cell([Row, Column]) :-
     Row >= 0, Row =< 7,
     Column >= 0, Column =< 7,
     Column =< Row.
+
+% Predicate to check if a cell is adjacent to another cell
+is_adjacent_cell(Row1, Column1, Row2, Column2) :-
+    adjacent_cells(Row1, Column1, AdjacentCells),
+    member([Row2, Column2], AdjacentCells).
+    
+stack_is_one_from(Row, Column) :-
+    board_stack(BoardStack),
+    nth0(Row, BoardStack, BoardStackRow),
+    nth0(Column, BoardStackRow, 1).
+
+
+stack_is_one_to(Row, Column) :-
+    board_stack(BoardStack),
+    nth0(Row, BoardStack, BoardStackRow),
+    nth0(Column, BoardStackRow, 1).
+
+equivalence_stack(Row1, Column1, Row2, Column2) :-
+    board_stack(BoardStack),
+    nth0(Row1, BoardStack, BoardStackRow1),
+    nth0(Column1, BoardStackRow1, Val1),
+    nth0(Row2, BoardStack, BoardStackRow2),
+    nth0(Column2, BoardStackRow2, Val2),
+    Val1 =:= Val2.
+
 
