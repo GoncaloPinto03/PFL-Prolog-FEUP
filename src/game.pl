@@ -52,11 +52,11 @@ game_loop(CurrentPlayer) :-
 */
  
 
-game_loop(CurrentPlayer) :-
+game_loop(CurrentPlayer) :- 
     display_board,
     display_board_stack,
     nl, write('Player '), write(CurrentPlayer), write("'s turn."), nl,
-
+    
     get_player_move_play_from(CurrentPlayer, Row1, Column1),
     get_player_move_play_to(CurrentPlayer, Row2, Column2),
 
