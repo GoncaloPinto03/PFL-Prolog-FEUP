@@ -86,18 +86,15 @@ play_pp :-
     initialize_board_stack, % Initialize the game board stack
     game_loop(playerA).
 
-play_pc :-      get_name(player1),
-                asserta((name_of(player2, 'bot'))), !, 
-                write('Choose the dificulty of your oponent'),
-                nl,
-                dificulty_choose_option(Input),
-                startGame(p-Input).
+play_pc :-
+    initialize_board, % Initialize the game board
+    initialize_board_stack, % Initialize the game board stack
+    game_loop_pc(playerA).
                 
-play_cc :-      write('Choose the dificulty of player 1'),
-                dificulty_choose_option(Input1),
-                write('Choose the dificulty of player 2'),
-                dificulty_choose_option(Input2),
-                startGame(Input1-Input2).
+play_cc :-
+    initialize_board, % Initialize the game board
+    initialize_board_stack, % Initialize the game board stack
+    game_loop_cc(playerA).
 
 instructions :- display_instructions,
                 nl,
@@ -111,8 +108,8 @@ instructions :- display_instructions,
 
 % READS THE INPUT GIVEN BY THE USER
 read_menu_input(1) :- play_pp.
-read_menu_input(2) :- write('play_pc'). 
-read_menu_input(3) :- write('play_cc').
+read_menu_input(2) :- play_pc. 
+read_menu_input(3) :- play_cc.
 read_menu_input(4) :- instructions.
 read_menu_input(0) :- exit_game.
 

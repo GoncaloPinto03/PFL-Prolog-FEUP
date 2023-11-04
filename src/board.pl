@@ -21,12 +21,12 @@ initialize_board :-
     retractall(board(_)),
     assertz(board([
         [empty, none, none, none, none, none, none, none],
-        [empty, empty, none, none, none, none, none, none],
+        [playerA, playerB, none, none, none, none, none, none],
         [empty, empty, empty, none, none, none, none, none],
-        [empty, empty, empty, empty, none, none, none, none],
+        [playerA, empty, playerB, empty, none, none, none, none],
         [empty, empty, empty, empty, empty, none, none, none],
-        [empty, empty, empty, empty, empty, empty, none, none],
-        [empty, empty, empty, empty, empty, empty, empty, none],
+        [empty, playerB, empty, empty, empty, empty, none, none],
+        [empty, empty, empty, empty, playerA, empty, empty, none],
         [empty, empty, empty, empty, empty, empty, empty, empty]
     ])).
 
@@ -34,18 +34,19 @@ initialize_board_stack :-
     retractall(board_stack(_)),
     assertz(board_stack([
         [0, '  ', '  ', '  ', '  ', '  ', '  ', '  '],
-        [0, 0, '  ', '  ', '  ', '  ', '  ', '  '],
+        [1, 1, '  ', '  ', '  ', '  ', '  ', '  '],
         [0, 0, 0, '  ', '  ', '  ', '  ', '  '],
-        [0, 0, 0, 0, '  ', '  ', '  ', '  '],
+        [1, 0, 1, 0, '  ', '  ', '  ', '  '],
         [0, 0, 0, 0, 0, '  ', '  ', '  '],
-        [0, 0, 0, 0, 0, 0, '  ', '  '],
-        [0, 0, 0, 0, 0, 0, 0, '  '],
+        [0, 1, 0, 0, 0, 0, '  ', '  '],
+        [0, 0, 0, 0, 1, 0, 0, '  '],
         [0, 0, 0, 0, 0, 0, 0, 0]
 
                                   ])).
 
 player(playerA).
 player(playerB).
+player(bot).
 
 % Define the current player
 current_player(P) :- player(P).
@@ -118,6 +119,17 @@ displayGame :-
 validPlayer(playerA).
 validPlayer(playerB).
 
+% Decrement the value at the specified row and column
+decrement_cell_value(Row, Col) :-
+    board_stack(Board),
+    nth0(Row, Board, OldRow),
+    nth0(Col, OldRow, OldValue),
+    NewValue is OldValue - 1,
+    replace(OldRow, Col, NewValue, NewRow),
+    replace(Board, Row, NewRow, NewBoard),
+    retract(board_stack(_)),
+    assertz(board_stack(NewBoard)).
+
 % Increment the value at the specified row and column
 increment_cell_value(Row, Col) :-
     board_stack(Board),
@@ -152,6 +164,21 @@ place_piece(Row, Column, Piece) :-
     replace(Row, NewRow, Board, NewBoard),
     assertz(board(NewBoard)),
     increment_cell_value(Row, Column).
+
+% Move a piece from a position on another on the game board
+move_piece(Row1, Column1, Row2, Column2, Piece) :-
+    retract(board(Board)),
+    nth0(Row2, Board, OldRow2),
+    nth0(Column1, OldRow1, Piece), % Check if the piece at (Row1, Column1) is the player's piece
+    replace(Column1, empty, OldRow1, NewRow1), % Replace the old position with an empty space
+    replace(Row1, NewRow1, Board, TempBoard),
+    assertz(board(TempBoard)),
+    replace(Column2, Piece, OldRow2, NewRow2), % Place the piece at the new position
+    replace(Row2, NewRow2, Board, NewBoard), % Update the board
+    assertz(board(NewBoard)),
+    decrement_cell_value(Row1, Column1),
+    increment_cell_value(Row2, Column2).
+
 
 % Utility predicate to replace an element in a list with a new element
 replace(Index, Element, OldList, NewList) :-
