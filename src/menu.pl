@@ -66,21 +66,6 @@ menu :- repeat,
         read(Input),
         read_menu_input(Input).
 
-
-/**
- * startGame(+Type)
- *
- * Starts game of the given Type
- *
- * Type -> p-p, p-[e,h] or [e,h]-[e,h]
- * p = player, e = easy bot, h = hard bot
- */
-startGame(Type) :-
-    clear_display,
-    gameInit(Type),
-    fail. % Go back to menu
-
-
 play_pp :-
     initialize_board, % Initialize the game board
     initialize_board_stack, % Initialize the game board stack

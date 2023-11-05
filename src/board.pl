@@ -20,26 +20,26 @@
 initialize_board :-
     retractall(board(_)),
     assertz(board([
-        [playerA, none, none, none, none, none, none, none],
-        [playerA, playerB, none, none, none, none, none, none],
-        [empty, playerA, playerA, none, none, none, none, none],
-        [playerA, empty, playerB, empty, none, none, none, none],
+        [empty, none, none, none, none, none, none, none],
+        [empty, empty, none, none, none, none, none, none],
+        [empty, empty, empty, none, none, none, none, none],
+        [empty, empty, empty, empty, none, none, none, none],
         [empty, empty, empty, empty, empty, none, none, none],
-        [empty, playerB, empty, empty, empty, empty, none, none],
-        [empty, empty, empty, empty, playerA, empty, empty, none],
+        [empty, empty, empty, empty, empty, empty, none, none],
+        [empty, empty, empty, empty, empty, empty, empty, none],
         [empty, empty, empty, empty, empty, empty, empty, empty]
     ])).
 
 initialize_board_stack :-
     retractall(board_stack(_)),
     assertz(board_stack([
-        [1, '  ', '  ', '  ', '  ', '  ', '  ', '  '],
-        [1, 1, '  ', '  ', '  ', '  ', '  ', '  '],
-        [0, 1, 1, '  ', '  ', '  ', '  ', '  '],
-        [1, 0, 1, 0, '  ', '  ', '  ', '  '],
+        [0, '  ', '  ', '  ', '  ', '  ', '  ', '  '],
+        [0, 0, '  ', '  ', '  ', '  ', '  ', '  '],
+        [0, 0, 0, '  ', '  ', '  ', '  ', '  '],
+        [0, 0, 0, 0, '  ', '  ', '  ', '  '],
         [0, 0, 0, 0, 0, '  ', '  ', '  '],
-        [0, 1, 0, 0, 0, 0, '  ', '  '],
-        [0, 0, 0, 0, 1, 0, 0, '  '],
+        [0, 0, 0, 0, 0, 0, '  ', '  '],
+        [0, 0, 0, 0, 0, 0, 0, '  '],
         [0, 0, 0, 0, 0, 0, 0, 0]
 
                                   ])).
