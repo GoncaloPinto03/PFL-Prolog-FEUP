@@ -55,7 +55,7 @@ display_instructions :- write('*************************************************
                         write('***********************************************************************************************'),nl.
 
 % CLEARS THE TERMINAL SCREEN
-clear_display :- write('\e[2J').
+clear_display :- write('\e').
 
 % DISPLAYS THE MENU
 menu :- repeat,

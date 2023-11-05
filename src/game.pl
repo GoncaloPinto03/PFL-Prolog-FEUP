@@ -13,7 +13,11 @@ game_loop(CurrentPlayer) :-
         write('Player B\'s turn.')
     ),
     nl,
+    write('Type 1 to continue'), nl,
+    write('Type 2 to get back to Menu'), nl,
+    read(Input),
     % Ask the player for their choice: 1 for inserting a piece, 2 for moving a piece
+    (Input =:=1 ->
     write('Enter 1 to insert a piece, 2 to move a piece: '),
     read(PlayerChoice),
 
@@ -82,7 +86,11 @@ game_loop(CurrentPlayer) :-
     ;
         write('Invalid choice. Try again.'), nl,
         game_loop(CurrentPlayer) % Stay on the same player's turn
-    ).
+    )
+   ;
+     menu
+    )    
+.
 
 % Game loop for Player vs Bot
 game_loop_pc(CurrentPlayer) :-
