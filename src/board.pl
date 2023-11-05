@@ -46,7 +46,6 @@ initialize_board_stack :-
 
 player(playerA).
 player(playerB).
-player(bot).
 
 % Define the current player
 current_player(P) :- player(P).
@@ -81,35 +80,6 @@ show_cell(none) :- write(' ').
 show_cell(playerA) :- write('A').
 show_cell(playerB) :- write('B').
 show_cell(empty) :- write('E').
-show_cell(asterisc) :- write('*').
-show_cell(arrow) :- write('-').
-
-show_cell(zero) :- write('0').
-show_cell(one) :- write('1').
-show_cell(two) :- write('2').
-show_cell(three) :- write('3').
-show_cell(four) :- write('4').
-show_cell(five) :- write('5').
-show_cell(six) :- write('6').
-show_cell(seven) :- write('7').
-show_cell(eight) :- write('8').
-show_cell(nine) :- write('9').
-show_cell(ten) :- write('10').
-show_cell(eleven) :- write('11').
-show_cell(twelve) :- write('12').
-show_cell(thirteen) :- write('13').
-show_cell(fourteen) :- write('14').
-show_cell(fifteen) :- write('15').
-show_cell(sixteen) :- write('16').
-show_cell(seventeen) :- write('17').
-show_cell(eighteen) :- write('18').
-show_cell(nineteen) :- write('19').
-show_cell(twenty) :- write('20').
-
-
-piece_info(player1, playerA).
-piece_info(player2, playerB).
-
 
 displayGame :-
     display_board,

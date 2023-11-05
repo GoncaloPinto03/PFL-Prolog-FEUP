@@ -101,13 +101,21 @@ game_loop_pc(CurrentPlayer) :-
     (CurrentPlayer = playerA ->
         write('Player A\'s turn.'),
         nl,
-        % Ask the player for their choice: 1 for inserting a piece, 2 for moving a piece
-        write('Enter 1 to insert a piece, 2 to move a piece: '),
-        read(PlayerChoice)
+        write('Type 1 to continue'), nl,
+        write('Type 2 to get back to Menu'), nl,
+        read(Input)
     ;
         write('Bot\'s turn.'),
+        nl,
+        Input = 1,
         random(1, 3, PlayerChoice)
     ),
+    (Input =:= 1 ->
+     (CurrentPlayer = playerA ->
+     write('Enter 1 to insert a piece, 2 to move a piece: '),
+     read(PlayerChoice)
+     ;
+      nl),
     (PlayerChoice =:= 1 -> % Player wants to insert a piece
      (CurrentPlayer = playerA ->
       get_player_place_play(CurrentPlayer, Row, Column)
@@ -179,6 +187,8 @@ game_loop_pc(CurrentPlayer) :-
     ;
         write('Invalid choice. Try again.'), nl,
         game_loop_pc(CurrentPlayer) % Stay on the same player's turn
+    );
+     menu
     ).
 
 % Game loop for Player vs Bot
@@ -341,9 +351,6 @@ valid_input_move(RowInput, ColumnInput, Row, Column, Player) :-
 % Define a predicate to switch players
 switch_player(playerA, playerB).
 switch_player(playerB, playerA).
-
-switch_player(playerA, bot).
-switch_player(bot, playerA).
 
 
 % Define a basic valid_place predicate for placing a piece in an empty cell
