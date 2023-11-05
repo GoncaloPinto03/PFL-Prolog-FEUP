@@ -366,43 +366,6 @@ valid_move(Player, Row, Column) :-
     nth0(Column, RowList, Player),
     player(Player).
 
-
-% Predicate to find the first player piece on the defined edges of the board.
-find_edge_piece(Player, Board, Position) :-
-    find_first_column_piece(Player, Board, Position); % Check the first column.
-    find_last_row_piece(Player, Board, Position); % Check the last row.
-    find_diagonal_piece(Player, Board, Position). % Check the diagonal.
-
-% Find the first piece in the first column.
-find_first_column_piece(Player, Board, X/Y) :-
-    nth1(Y, Board, Row),
-    nth1(1, Row, Player),
-    !, % Cut to prevent backtracking once a match is found.
-    X = 1.
-
-% Find the first piece in the last row.
-find_last_row_piece(Player, Board, X/Y) :-
-    last(Board, LastRow),
-    nth1(X, LastRow, Player),
-    !, % Cut to prevent backtracking once a match is found.
-    length(Board, Y).
-
-% Find the first piece on the diagonal where X = Y.
-find_diagonal_piece(Player, Board, Position) :-
-    find_diagonal_piece_helper(Player, Board, 1, Position).
-
-find_diagonal_piece_helper(Player, Board, Index, Index/Index) :-
-    nth1(Index, Board, Row),
-    nth1(Index, Row, Player),
-    !. % Cut to prevent backtracking once a match is found.
-
-find_diagonal_piece_helper(Player, Board, Index, Position) :-
-    Index < 8,
-    NextIndex is Index + 1,
-    find_diagonal_piece_helper(Player, Board, NextIndex, Position).
-
-
-
 % Define a predicate to check if a player has won by connecting the sides of the triangle
 player_wins(Player) :-
     % Find a starting piece on the left side of the triangle
