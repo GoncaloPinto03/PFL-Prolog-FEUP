@@ -1,7 +1,6 @@
 % CONSULT ALL FILES
 :- consult('menu.pl').
 :- consult('board.pl').
-:- consult('utils.pl').
 :- consult('game.pl').
 
 /**
