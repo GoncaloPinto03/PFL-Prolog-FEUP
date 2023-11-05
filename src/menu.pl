@@ -17,9 +17,9 @@ display_menu:-  nl,
                 write('* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *'),nl,
                 write('*                                                       *                                       *'),nl,
                 write('*                                                       *         @@@@  @@@@  @  @  @@@         *'),nl,
-                write('*          GONÇALO PINTO  * UP202108693                 *         @     @     @  @  @  @        *'),nl,
+                write('*          GONCALO PINTO  * UP202108693                 *         @     @     @  @  @  @        *'),nl,
                 write('*                                                       *         @@@   @@@@  @  @  @@@         *'),nl,
-                write('*          GONÇALO SANTOS * UP202108839                 *         @     @     @  @  @           *'),nl,
+                write('*          GONCALO SANTOS * UP202108839                 *         @     @     @  @  @           *'),nl,
                 write('*                                                       *         @     @@@@  @@@@  @           *'),nl,
                 write('*                                                       *                                       *'),nl,
                 write('* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *'),nl.
@@ -127,4 +127,3 @@ menu_choose_option :-   write('Choose an option (0-4)'),
 
 
 exit_game :- clear_display, nl, write('Good bye! Thanks for playing ;)').
-

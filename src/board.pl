@@ -47,19 +47,40 @@ initialize_board_stack :-
 player(playerA).
 player(playerB).
 
-show_board(Board) :- nl, maplist(show_row, Board), nl.
+show_board(Board) :- nl, show_board(Board, 21). % Start with an initial indentation of 3 spaces
 show_row([]) :- nl.
 show_row([Cell | Rest]) :-
     show_cell(Cell),
     write('   '), % Insert 3 spaces between cells
     show_row(Rest).
 
+show_board([], _).
+show_board([Row | Rest], Indent) :-
+    indent(Indent), % Add the current level of indentation
+    show_row(Row),
+    NextIndent is Indent - 2, % Increase the indentation for the next row
+    show_board(Rest, NextIndent).
+
+indent(0).
+indent(N) :- N > 0, write(' '), N1 is N - 1, indent(N1).
+
+
+
 % Display each element of a list (matrix)
 display_board :-
     board(Board),
     show_board(Board).
 
-show_board_stack(BoardStack) :- nl, maplist(show_row_stack, BoardStack), nl.
+%show_board_stack(BoardStack) :- nl, maplist(show_row_stack, BoardStack), nl.
+show_board_stack(Board) :- nl, show_board_stack(Board, 21). % Start with an initial indentation of 3 spaces
+
+
+show_board_stack([], _).
+show_board_stack([Row | Rest], Indent) :-
+    indent(Indent), % Add the current level of indentation
+    show_row_stack(Row),
+    NextIndent is Indent - 2, % Increase the indentation for the next row
+    show_board_stack(Rest, NextIndent).
 
 show_row_stack([]) :- nl.
 show_row_stack([Cell | Rest]) :-
@@ -213,5 +234,4 @@ equivalence_stack(Row1, Column1, Row2, Column2) :-
     nth0(Row2, BoardStack, BoardStackRow2),
     nth0(Column2, BoardStackRow2, Val2),
     Val1 =:= Val2.
-
 
