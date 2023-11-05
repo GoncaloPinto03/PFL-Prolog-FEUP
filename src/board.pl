@@ -47,9 +47,6 @@ initialize_board_stack :-
 player(playerA).
 player(playerB).
 
-% Define the current player
-current_player(P) :- player(P).
-
 show_board(Board) :- nl, maplist(show_row, Board), nl.
 show_row([]) :- nl.
 show_row([Cell | Rest]) :-
@@ -84,10 +81,6 @@ show_cell(empty) :- write('E').
 displayGame :-
     display_board,
     display_board_stack.
-   
-
-validPlayer(playerA).
-validPlayer(playerB).
 
 % Decrement the value at the specified row and column
 decrement_cell_value(Row, Col) :-

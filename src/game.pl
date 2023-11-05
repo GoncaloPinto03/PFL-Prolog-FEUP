@@ -90,8 +90,7 @@ game_loop(CurrentPlayer) :-
     )
    ;
      menu
-    )    
-.
+    ).
 
 % Game loop for Player vs Bot
 game_loop_pc(CurrentPlayer) :-

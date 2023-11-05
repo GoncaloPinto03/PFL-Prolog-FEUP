@@ -67,20 +67,6 @@ menu :- repeat,
         read_menu_input(Input).
 
 
-/**
- * startGame(+Type)
- *
- * Starts game of the given Type
- *
- * Type -> p-p, p-[e,h] or [e,h]-[e,h]
- * p = player, e = easy bot, h = hard bot
- */
-startGame(Type) :-
-    clear_display,
-    gameInit(Type),
-    fail. % Go back to menu
-
-
 play_pp :-
     initialize_board, % Initialize the game board
     initialize_board_stack, % Initialize the game board stack
@@ -141,25 +127,4 @@ menu_choose_option :-   write('Choose an option (0-4)'),
 
 
 exit_game :- clear_display, nl, write('Good bye! Thanks for playing ;)').
-
-dificulty_choose_option(Input) :-
-                write('Choose a dificulty (1 or 2)'),
-                nl,
-                write('Easy (Random) -> 1'),
-                nl,
-                write('Hard (Greedy) -> 2'),
-                nl,
-                write('> '),
-                read(Input),
-                read_dificulty_input(Input).
-
-
-read_dificulty_input(1) :- write('Easy').
-read_dificulty_input(2) :- write('Hard').
-read_dificulty_input(_Other) :- write('Invalid option... Try again!'),
-                                nl,
-                                dificulty_choose_option(Input),
-                                read(Input),
-                                read_dificulty_input(Input).
-
 
