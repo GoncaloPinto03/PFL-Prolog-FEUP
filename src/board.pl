@@ -1,13 +1,5 @@
 :- use_module(library(lists)).
 
-% name_of(+Player, -Name)
-% Find the Players name
-:- dynamic name_of/2.
-
-% difficulty(+Bot,-Difficulty)
-% Find the Bot difficulty
-:- dynamic difficulty/2.
-
 :- dynamic board/1.
 
 :- dynamic board_stack/1.
@@ -71,15 +63,14 @@ display_board :-
     board(Board),
     show_board(Board).
 
-%show_board_stack(BoardStack) :- nl, maplist(show_row_stack, BoardStack), nl.
-show_board_stack(Board) :- nl, show_board_stack(Board, 21). % Start with an initial indentation of 3 spaces
+show_board_stack(Board) :- nl, show_board_stack(Board, 21). % Start with an initial indentation of 21 spaces
 
 
 show_board_stack([], _).
 show_board_stack([Row | Rest], Indent) :-
-    indent(Indent), % Add the current level of indentation
+    indent(Indent), % Subtract the current level of indentation
     show_row_stack(Row),
-    NextIndent is Indent - 2, % Increase the indentation for the next row
+    NextIndent is Indent - 2, % Decrease the indentation for the next row
     show_board_stack(Rest, NextIndent).
 
 show_row_stack([]) :- nl.
@@ -88,7 +79,7 @@ show_row_stack([Cell | Rest]) :-
     write('   '), % Insert 3 spaces between cells
     show_row_stack(Rest).
 
-% Display each element of a list (matrix)
+% Display each element of the auxiliar board (stack board)
 display_board_stack :-
     board_stack(BoardStack),
     show_board_stack(BoardStack).

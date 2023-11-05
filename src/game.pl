@@ -51,7 +51,7 @@ game_loop(CurrentPlayer) :-
         find_all_possible_moves(CurrentPlayer,PossibleMoves),
         display_possible_moves(PossibleMoves),
         length(PossibleMoves, Len),
-
+        % Checks if there are no possible moves
         (Len > 0 ->
         get_player_move_play_from(CurrentPlayer, Row1, Column1),
         get_player_move_play_to(CurrentPlayer, Row2, Column2),
@@ -100,82 +100,11 @@ game_loop(CurrentPlayer) :-
          )
     ;
         write('Invalid choice. Try again.'), nl,
-        game_loop(CurrentPlayer) % Stay on the same player's turn
+        game_loop(CurrentPlayer) 
     )
    ;
      menu
     ).
-
-
-
-% Predicate to find possible insert positions
-find_possible_inserts(PossibleInserts) :-
-    find_possible_inserts(1, 1, [], PossibleInserts).
-
-find_possible_inserts(9, _, PossibleInserts, PossibleInserts) :- !.
-find_possible_inserts(Row, 9, Acc, PossibleInserts) :-
-    NextRow is Row + 1,
-    find_possible_inserts(NextRow, 1, Acc, PossibleInserts).
-find_possible_inserts(Row, Col, Acc, PossibleInserts) :-
-    board(Board),
-    nth1(Row, Board, RowList),
-    nth1(Col, RowList, empty),
-    !,
-    NextCol is Col + 1,
-    find_possible_inserts(Row, NextCol, [(Row, Col) | Acc], PossibleInserts).
-find_possible_inserts(Row, Col, Acc, PossibleInserts) :-
-    NextCol is Col + 1,
-    find_possible_inserts(Row, NextCol, Acc, PossibleInserts).
-
-
-
-% Define a predicate to find all possible moves for the current player
-find_all_possible_moves(CurrentPlayer, PossibleMoves) :-
-    findall([Row1, Column1, Row2, Column2], (
-        % Iterate through all cells on the board
-        between(0, 7, Row1),
-        between(0, 7, Column1),
-        % Check if the current cell contains a piece of the current player
-        board(Board),
-        nth0(Row1, Board, RowList1),
-        nth0(Column1, RowList1, CurrentPlayer),
-        % Iterate through adjacent cells
-        adjacent_cells(Row1, Column1, AdjacentCells),
-        member([Row2, Column2], AdjacentCells),
-        % Check if the adjacent cell contains the other player's piece
-        board(Board),
-        nth0(Row2, Board, RowList2),
-        nth0(Column2, RowList2, OtherPlayer),
-        player(CurrentPlayer),
-        (CurrentPlayer = playerA -> OtherPlayer = playerB ; CurrentPlayer = playerB, OtherPlayer = playerA),
-        % Check if the stack heights are equal
-        equivalence_stack(Row1, Column1, Row2, Column2)
-    ), PossibleMoves).
-
-% Define a predicate to display the list of possible moves
-display_possible_moves([]).
-display_possible_moves([[Row1, Column1, Row2, Column2] | Rest]) :-
-    Row_aux1 is Row1+1,
-    Column_aux1 is Column1 +1,
-    Row_aux2 is Row2+1,
-    Column_aux2 is Column2 +1,
-    write('Possible move from Row '), write(Row_aux1), write(' Column '), write(Column_aux1),
-    write(' to Row '), write(Row_aux2), write(' Column '), write(Column_aux2), nl,
-    display_possible_moves(Rest).
-
-
-
-% Display possible insert positions
-display_possible_inserts(PossibleInserts) :-
-    write('Possible Insert Positions:'), nl,
-    display_insert_positions(PossibleInserts, 1).
-
-display_insert_positions([], _).
-display_insert_positions([(Row, Col) | Rest], Index) :-
-    write(Index), write('. Row: '), write(Row), write(', Column: '), write(Col), nl,
-    NextIndex is Index + 1,
-    display_insert_positions(Rest, NextIndex).
-
 
 % Game loop for Player vs Bot
 game_loop_pc(CurrentPlayer) :-
@@ -277,7 +206,7 @@ game_loop_pc(CurrentPlayer) :-
         game_loop_pc(CurrentPlayer) % Stay on the same player's turn
     ).
 
-% Game loop for Player vs Bot
+% Game loop for Bot vs Bot
 game_loop_cc(CurrentPlayer) :-
     display_board,
     display_board_stack,
@@ -367,6 +296,70 @@ game_loop_cc(CurrentPlayer) :-
         game_loop_cc(CurrentPlayer) % Stay on the same player's turn
     ).
 
+% Predicate to find possible insert positions
+find_possible_inserts(PossibleInserts) :-
+    find_possible_inserts(1, 1, [], PossibleInserts).
+
+find_possible_inserts(9, _, PossibleInserts, PossibleInserts) :- !.
+find_possible_inserts(Row, 9, Acc, PossibleInserts) :-
+    NextRow is Row + 1,
+    find_possible_inserts(NextRow, 1, Acc, PossibleInserts).
+find_possible_inserts(Row, Col, Acc, PossibleInserts) :-
+    board(Board),
+    nth1(Row, Board, RowList),
+    nth1(Col, RowList, empty),
+    !,
+    NextCol is Col + 1,
+    find_possible_inserts(Row, NextCol, [(Row, Col) | Acc], PossibleInserts).
+find_possible_inserts(Row, Col, Acc, PossibleInserts) :-
+    NextCol is Col + 1,
+    find_possible_inserts(Row, NextCol, Acc, PossibleInserts).
+
+% Define a predicate to find all possible moves for the current player
+find_all_possible_moves(CurrentPlayer, PossibleMoves) :-
+    findall([Row1, Column1, Row2, Column2], (
+        % Iterate through all cells on the board
+        between(0, 7, Row1),
+        between(0, 7, Column1),
+        % Check if the current cell contains a piece of the current player
+        board(Board),
+        nth0(Row1, Board, RowList1),
+        nth0(Column1, RowList1, CurrentPlayer),
+        % Iterate through adjacent cells
+        adjacent_cells(Row1, Column1, AdjacentCells),
+        member([Row2, Column2], AdjacentCells),
+        % Check if the adjacent cell contains the other player's piece
+        board(Board),
+        nth0(Row2, Board, RowList2),
+        nth0(Column2, RowList2, OtherPlayer),
+        player(CurrentPlayer),
+        (CurrentPlayer = playerA -> OtherPlayer = playerB ; CurrentPlayer = playerB, OtherPlayer = playerA),
+        % Check if the stack heights are equal
+        equivalence_stack(Row1, Column1, Row2, Column2)
+    ), PossibleMoves).
+
+% Define a predicate to display the list of possible moves
+display_possible_moves([]).
+display_possible_moves([[Row1, Column1, Row2, Column2] | Rest]) :-
+    Row_aux1 is Row1+1,
+    Column_aux1 is Column1 +1,
+    Row_aux2 is Row2+1,
+    Column_aux2 is Column2 +1,
+    write('Possible move from Row '), write(Row_aux1), write(' Column '), write(Column_aux1),
+    write(' to Row '), write(Row_aux2), write(' Column '), write(Column_aux2), nl,
+    display_possible_moves(Rest).
+
+% Display possible insert positions
+display_possible_inserts(PossibleInserts) :-
+    write('Possible Insert Positions:'), nl,
+    display_insert_positions(PossibleInserts, 1).
+
+display_insert_positions([], _).
+display_insert_positions([(Row, Col) | Rest], Index) :-
+    write(Index), write('. Row: '), write(Row), write(', Column: '), write(Col), nl,
+    NextIndex is Index + 1,
+    display_insert_positions(Rest, NextIndex).
+
 % Define a predicate to get the player's move (row and column)
 get_player_place_play(Player, Row, Column) :-
     repeat,
@@ -445,15 +438,6 @@ valid_input_move(RowInput, ColumnInput, Row, Column, Player) :-
     Column is ColumnInput - 1, % Adjust for 0-based indexing
     valid_move(Player, Row, Column). % Check if the move is valid based on game rules
 
-
-% Define a predicate to switch players
-switch_player(playerA, playerB).
-switch_player(playerB, playerA).
-
-switch_player(playerA, bot).
-switch_player(bot, playerA).
-
-
 % Define a basic valid_place predicate for placing a piece in an empty cell
 valid_place(Player, Row, Column) :-
     board(Board),
@@ -469,41 +453,9 @@ valid_move(Player, Row, Column) :-
     player(Player).
 
 
-% Predicate to find the first player piece on the defined edges of the board.
-find_edge_piece(Player, Board, Position) :-
-    find_first_column_piece(Player, Board, Position); % Check the first column.
-    find_last_row_piece(Player, Board, Position); % Check the last row.
-    find_diagonal_piece(Player, Board, Position). % Check the diagonal.
-
-% Find the first piece in the first column.
-find_first_column_piece(Player, Board, X/Y) :-
-    nth1(Y, Board, Row),
-    nth1(1, Row, Player),
-    !, % Cut to prevent backtracking once a match is found.
-    X = 1.
-
-% Find the first piece in the last row.
-find_last_row_piece(Player, Board, X/Y) :-
-    last(Board, LastRow),
-    nth1(X, LastRow, Player),
-    !, % Cut to prevent backtracking once a match is found.
-    length(Board, Y).
-
-% Find the first piece on the diagonal where X = Y.
-find_diagonal_piece(Player, Board, Position) :-
-    find_diagonal_piece_helper(Player, Board, 1, Position).
-
-find_diagonal_piece_helper(Player, Board, Index, Index/Index) :-
-    nth1(Index, Board, Row),
-    nth1(Index, Row, Player),
-    !. % Cut to prevent backtracking once a match is found.
-
-find_diagonal_piece_helper(Player, Board, Index, Position) :-
-    Index < 8,
-    NextIndex is Index + 1,
-    find_diagonal_piece_helper(Player, Board, NextIndex, Position).
-
-
+% Define a predicate to switch players
+switch_player(playerA, playerB).
+switch_player(playerB, playerA).
 
 % Define a predicate to check if a player has won by connecting the sides of the triangle
 player_wins(Player) :-
