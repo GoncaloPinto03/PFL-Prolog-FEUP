@@ -51,7 +51,7 @@ game_loop(CurrentPlayer) :-
     ).
 */
  
-
+/*
 game_loop(CurrentPlayer) :- 
     display_board,
     display_board_stack,
@@ -93,12 +93,87 @@ game_loop(CurrentPlayer) :-
         game_loop(CurrentPlayer)
     ).
 
+*/
+
+game_loop(CurrentPlayer) :-
+    display_board,
+    display_board_stack,
+    %nl, write('Player '), write(CurrentPlayer), write("'s turn."), nl,
+     (CurrentPlayer = playerA ->
+        write('Player A\'s turn.')
+    ;
+        write('Player B\'s turn.')
+    ),
+    nl,
+    % Ask the player for their choice: 1 for inserting a piece, 2 for moving a piece
+    write('Enter 1 to insert a piece, 2 to move a piece: '),
+    read(PlayerChoice),
+
+    (PlayerChoice =:= 1 -> % Player wants to insert a piece
+        get_player_place_play(CurrentPlayer, Row, Column), % Get the player's move
+        (valid_place(CurrentPlayer, Row, Column) -> % Check if the move is valid
+            place_piece(Row, Column, CurrentPlayer),
+            (player_wins(CurrentPlayer) -> % Check if the player wins
+                display_board,
+                display_board_stack,
+                write('Player '), write(CurrentPlayer), write(' wins! Game over.'), nl
+            ;
+                % Switch to the other player and continue the game
+                switch_player(CurrentPlayer, NextPlayer),
+                game_loop(NextPlayer)
+            )
+        ;
+            write('Invalid move. Try again.'), nl,
+            game_loop(CurrentPlayer) % Stay on the same player's turn
+        )
+    ;
+        PlayerChoice =:= 2 -> % Player wants to move a piece
+        get_player_move_play_from(CurrentPlayer, Row1, Column1),
+        get_player_move_play_to(CurrentPlayer, Row2, Column2),
+
+        % Check if the move is valid
+        (valid_move(CurrentPlayer, Row1, Column1) ->
+
+            % Check if the stack heights are equal
+            (equivalence_stack(Row1, Column1, Row2, Column2) ->
+                % Check if the move is to an adjacent cell
+                (is_adjacent_cell(Row1, Column1, Row2, Column2) ->
+                    % If all conditions are met, move the piece
+                    move_piece(Row1, Column1, Row2, Column2, CurrentPlayer),
+                    (player_wins(CurrentPlayer) ->
+                        display_board,
+                        display_board_stack,
+                        write('Player '), write(CurrentPlayer), write(' wins! Game over.'), nl
+                    ;
+                        % Switch to the other player and continue the game
+                        switch_player(CurrentPlayer, NextPlayer),
+                        game_loop(NextPlayer)
+                    )
+                ;
+                    % If the move is not to an adjacent cell, display a message and try again
+                    write('Piece can only be moved to an adjacent cell! Try again.'), nl,
+                    game_loop(CurrentPlayer)
+                )
+            ;
+                % If the stack heights are not equal, display a message and try again
+                write('Stack heights are not equal! Try again.'), nl,
+                game_loop(CurrentPlayer)
+            )
+        ;
+            write('Invalid move. Try again.'), nl,
+            game_loop(CurrentPlayer)
+        )
+    ;
+        write('Invalid choice. Try again.'), nl,
+        game_loop(CurrentPlayer) % Stay on the same player's turn
+    ).
 
 
 
 % Define a predicate to get the player's move (row and column)
 get_player_place_play(Player, Row, Column) :-
     repeat,
+    nl,
     write('Enter the row (1-8) and column (1-8) where you want to place your piece (e.g., "3 5"): '),
     read(RowInput),
     read(ColumnInput),
@@ -122,6 +197,24 @@ get_player_move_play_to(Player, Row, Column) :-
     read(ColumnInput),
     switch_player(Player, NextPlayer),
     valid_input_move(RowInput, ColumnInput, Row, Column, NextPlayer),
+    switch_player(NextPlayer, Player),
+    !. % Cut operator (!) to stop the repeat loop
+
+% Define a predicate to get the player's move (row and column)
+get_bot_move_play_from(Player, Row, Column) :-
+    repeat,
+    random(0, 7, RandomRow), % Generate a random row (0-7)
+    random(0, 7, RandomCol), % Generate a random column (0-7)
+    valid_input_move(RandomRow, RandomCol, Row, Column, Player),
+    !. % Cut operator (!) to stop the repeat loop
+
+% Define a predicate to get the player's move (row and column)
+get_bot_move_play_to(Player, Row, Column) :-
+    repeat,
+    random(0, 7, RandomRow), % Generate a random row (0-7)
+    random(0, 7, RandomCol), % Generate a random column (0-7)
+    switch_player(Player, NextPlayer),
+    valid_input_move(RandomRow, RandomCol, Row, Column, NextPlayer),
     switch_player(NextPlayer, Player),
     !. % Cut operator (!) to stop the repeat loop
 
@@ -183,7 +276,7 @@ game_loop_pc(CurrentPlayer) :-
         get_player_place_play(CurrentPlayer, Row, Column)
     ;
         write('Bot\'s turn.'),
-        make_bot_move(Row, Column) % Implement the bot's move predicate
+        get_bot_place_play(Row, Column) % Implement the bot's move predicate
     ),
     (valid_place(CurrentPlayer, Row, Column) ->
         place_piece(Row, Column, CurrentPlayer),
@@ -206,10 +299,10 @@ game_loop_cc(CurrentPlayer) :-
     display_board_stack, % Display the current game board stack
     (CurrentPlayer = playerA ->
         write('Player A\'s turn.'),
-        make_bot_move(Row, Column) % Implement the bot's move predicate
+        get_bot_place_play(Row, Column) % Implement the bot's move predicate
     ;
         write('Player B\'s turn.'),
-        make_bot_move(Row, Column) % Implement the bot's move predicate
+        get_bot_place_play(Row, Column) % Implement the bot's move predicate
     ),
     (valid_place(CurrentPlayer, Row, Column) -> % Check if the move is valid
         place_piece(Row, Column, CurrentPlayer), % Update the game board
@@ -228,7 +321,7 @@ game_loop_cc(CurrentPlayer) :-
     ).
 
 % Bot move predicate (random move)
-make_bot_move(Row, Column) :-
+get_bot_place_play(Row, Column) :-
     repeat,
     random(0, 7, RandomRow), % Generate a random row (0-7)
     random(0, 7, RandomCol), % Generate a random column (0-7)
@@ -326,12 +419,6 @@ right_side_spaces([[1, 1], [2, 2], [3, 3], [4, 4], [5, 5], [6, 6], [7, 7], [8, 8
 
 
 
-askForBoardPosition(Position) :-
-        write('Select a board position (1-36)'),
-        nl,
-        write('> '),
-        read(Position).
-
 askTypeOfMove(Player, Row, Column):-
         write('You want to:'),
         nl,
@@ -341,11 +428,12 @@ askTypeOfMove(Player, Row, Column):-
         nl,
         write('> '),
         read(Input),
-        read_type_of_move_input(Input).
+        read_type_of_move_input(Input, Player, Row, Column).
 
-read_type_of_move_input(1) :- get_player_place_play(Player, Row, Column).
-read_type_of_move_input(2) :- write('movePiece').
-read_type_of_move_input(_Other) :-      write('You want to:'),
+read_type_of_move_input(1, Player, Row, Column) :- get_player_place_play(Player, Row, Column).
+read_type_of_move_input(2, Player, Row, Column) :- get_player_move_play_from(Player, Row, Column).
+read_type_of_move_input(_Other, Player, Row, Column) :-
+                                        write('You want to:'),
                                         nl,
                                         write('Invalid option... Try again!'),
                                         nl,
